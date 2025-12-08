@@ -1,0 +1,5 @@
+{
+  "name": "Daily Schedule Manager",
+  "description": "A digital appointment scheduler replicating daily confirmation sheets with AI scanning capabilities.",
+  "requestFramePermissions": []
+}

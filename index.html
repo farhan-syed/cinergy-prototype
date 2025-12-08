@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cinergy Financial Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              cinergy: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                500: '#0ea5e9', // Sky blue-ish
+                600: '#0284c7',
+                800: '#075985',
+                900: '#0c4a6e', // Deep Navy
+              },
+              'sheet-bg': '#ffffff',
+              'sheet-header': '#f8fafc', // Slate 50
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Custom Scrollbar Styling */
+      ::-webkit-scrollbar {
+        height: 8px;
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1; /* slate-300 */
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #94a3b8; /* slate-400 */
+      }
+      
+      /* Firefox support */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+      }
+
+      @media print {
+        @page { 
+          size: landscape; 
+          margin: 0.25in; 
+        }
+        
+        body { 
+          background: white; 
+          -webkit-print-color-adjust: exact !important; 
+          print-color-adjust: exact !important; 
+        }
+
+        /* Explicitly hide elements marked with print:hidden by Tailwind or custom class if needed */
+        .no-print { 
+          display: none !important; 
+        }
+
+        /* Reset main container spacing for full width */
+        main {
+          padding: 0 !important;
+          margin: 0 !important;
+          max-width: none !important;
+          width: 100% !important;
+        }
+
+        /* Ensure content doesn't get cut off */
+        .print-break-inside-avoid { 
+          break-inside: avoid; 
+          page-break-inside: avoid;
+        }
+
+        /* Flatten visuals for print */
+        * {
+          box-shadow: none !important;
+          text-shadow: none !important;
+        }
+        
+        /* Better border contrast for print */
+        .border-slate-200, .border-slate-100 {
+          border-color: #cbd5e1 !important; /* slate-300 */
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-slate-50 text-slate-900 antialiased font-sans">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
