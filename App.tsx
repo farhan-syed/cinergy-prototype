@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
-import { Appointment, LocationType, ConfirmationStatus } from './types';
+import { Appointment, LocationType, ConfirmationStatus, ToDoItem } from './types';
 import ScheduleTable from './components/ScheduleTable';
 import IntakeForm from './components/IntakeForm';
+import ToDoList from './components/ToDoList';
 
 // Initial Dummy Data
 const INITIAL_DATA: Appointment[] = [
@@ -33,9 +35,12 @@ const INITIAL_DATA: Appointment[] = [
   }
 ];
 
+const INITIAL_TODOS: ToDoItem[] = [];
+
 export default function App() {
   const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_DATA);
-  const [activeTab, setActiveTab] = useState<'view' | 'intake'>('view');
+  const [todos, setTodos] = useState<ToDoItem[]>(INITIAL_TODOS);
+  const [activeTab, setActiveTab] = useState<'view' | 'intake' | 'todo'>('view');
 
   const owners = Array.from(new Set(appointments.map(a => a.owner)));
   const allOwners = Array.from(new Set([...owners, 'Cindy', 'Leticia', 'Staff']));
@@ -43,6 +48,41 @@ export default function App() {
   const handleAddAppointment = (newAppt: Appointment) => {
     setAppointments(prev => [...prev, newAppt]);
     setActiveTab('view');
+  };
+
+  const handleAddTodo = (text: string, completionTime?: string, sourceAppointmentId?: string) => {
+    const newTodo: ToDoItem = {
+      id: Math.random().toString(36).substr(2, 9),
+      text,
+      completed: false,
+      completionTime,
+      reminders: [],
+      sourceAppointmentId
+    };
+    setTodos(prev => [newTodo, ...prev]);
+  };
+
+  const handleToggleTodo = (id: string) => {
+    setTodos(prev => prev.map(item => 
+      item.id === id ? { ...item, completed: !item.completed } : item
+    ));
+  };
+
+  const handleDeleteTodo = (id: string) => {
+    setTodos(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleToggleReminder = (id: string, reminderType: string) => {
+    setTodos(prev => prev.map(item => {
+      if (item.id !== id) return item;
+      const reminders = item.reminders || [];
+      const exists = reminders.includes(reminderType);
+      const newReminders = exists 
+        ? reminders.filter(r => r !== reminderType) 
+        : [...reminders, reminderType];
+      
+      return { ...item, reminders: newReminders };
+    }));
   };
 
   return (
@@ -53,18 +93,37 @@ export default function App() {
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold tracking-tight text-slate-900">Cinergy Financial</h1>
           </div>
-          <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+          
+          <div className="flex items-center gap-4">
+            {/* Main View Toggle */}
+            <div className="flex gap-1 bg-slate-100 p-1 rounded-lg">
+              <button 
+                onClick={() => setActiveTab('view')}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'view' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                View Schedule
+              </button>
+              <button 
+                onClick={() => setActiveTab('intake')}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'intake' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              >
+                Add Event
+              </button>
+            </div>
+
+            {/* Divider */}
+            <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
+
+            {/* To-Do List Button */}
             <button 
-              onClick={() => setActiveTab('view')}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'view' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+              onClick={() => setActiveTab('todo')}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all border ${
+                activeTab === 'todo' 
+                  ? 'bg-slate-900 border-slate-900 text-white shadow-sm' 
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+              }`}
             >
-              View Schedule
-            </button>
-            <button 
-              onClick={() => setActiveTab('intake')}
-              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'intake' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-            >
-              Add Event
+              My To-Do List
             </button>
           </div>
         </div>
@@ -109,9 +168,20 @@ export default function App() {
               );
             })}
           </div>
-        ) : (
+        ) : activeTab === 'intake' ? (
           <div className="max-w-3xl mx-auto print:hidden">
              <IntakeForm onAdd={handleAddAppointment} owners={allOwners} />
+          </div>
+        ) : (
+          <div className="print:block">
+            <ToDoList 
+              items={todos}
+              appointments={appointments}
+              onAdd={handleAddTodo}
+              onToggle={handleToggleTodo}
+              onDelete={handleDeleteTodo}
+              onToggleReminder={handleToggleReminder}
+            />
           </div>
         )}
       </main>

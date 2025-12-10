@@ -35,3 +35,12 @@ export interface DaySchedule {
   date: string;
   appointments: Appointment[];
 }
+
+export interface ToDoItem {
+  id: string;
+  text: string;
+  completed: boolean;
+  completionTime?: string; // HH:mm format, time the item needs to be completed
+  reminders: string[]; // Array of active reminders: '1h', '30m', '10m'
+  sourceAppointmentId?: string; // ID of the appointment if imported from schedule
+}
