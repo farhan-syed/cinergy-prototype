@@ -173,10 +173,10 @@ export default function App() {
       </header>
 
       {/* Prototype Disclaimer Banner */}
-      <div className="bg-slate-50 border-b border-slate-200 print:hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+      <div className="bg-yellow-50 border-b border-yellow-200 print:hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-start gap-3">
-            <svg className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p className="text-sm text-slate-700 leading-relaxed">
                 <span className="font-semibold text-slate-900">Prototype Preview:</span> This is a non-functional prototype programmed to demonstrate the possibilities of an in house software built specifically for Cinergy Financial's needs/workflow. <b>Disregard</b> how things look/feel as that can always be changed. If you think of a must add feature for v1, please email <a href="mailto:farhan@cinergyfinancial.com" className="text-cinergy-600 hover:text-cinergy-800 hover:underline">farhan@cinergyfinancial.com</a>
             </p>
         </div>

@@ -91,13 +91,13 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ owner, appointments, onEd
           <thead>
             <tr className="bg-white border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider print:text-slate-700 print:border-slate-300">
               <th className="px-4 py-3 w-20">Time</th>
-              <th className="px-4 py-3 w-1/5">Name / Description</th>
+              <th className="px-4 py-3">Name / Description</th>
               <th className="px-4 py-3 w-28">Date of last Acct. Summary</th>
-              <th className="px-4 py-3 w-16 text-center">RMD</th>
-              <th className="px-4 py-3 w-32">Phone</th>
-              <th className="px-4 py-3 w-40">Email</th>
+              {/* RMD Removed */}
+              <th className="px-4 py-3 w-36">Phone</th>
+              <th className="px-4 py-3 w-48">Email</th>
               <th className="px-4 py-3 w-24">Location</th>
-              <th className="px-4 py-3 w-32 text-center">Status</th>
+              <th className="px-4 py-3 w-24 text-center">Status</th>
               <th className="px-4 py-3 w-32">Avail. for DPPs</th>
               <th className="px-4 py-3 w-32">Avail. for IFs</th>
               <th className="px-4 py-3 w-16 text-center print:hidden">Edit</th>
@@ -106,7 +106,7 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ owner, appointments, onEd
           <tbody className="text-sm print:divide-slate-200">
             {sortedAppointments.length === 0 ? (
                <tr className="bg-slate-50/30">
-                 <td colSpan={11} className="px-6 py-8 text-center text-slate-400 italic">
+                 <td colSpan={10} className="px-6 py-8 text-center text-slate-400 italic">
                    No appointments scheduled for {owner}
                  </td>
                </tr>
@@ -142,18 +142,26 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ owner, appointments, onEd
                       {appt.lastAcctSummary || '-'}
                     </td>
 
-                    <td className="px-4 py-4 text-center align-top">
-                       {appt.rmdCheck && (
-                         <span className="inline-flex items-center justify-center w-5 h-5 bg-green-100 text-green-600 rounded-full text-xs font-bold print:border print:border-green-200">✓</span>
-                       )}
-                    </td>
-
+                    {/* Phone Column - Normal Text */}
                     <td className="px-4 py-4 align-top">
-                      <div className="text-slate-600 font-medium text-xs break-words">{appt.phone}</div>
+                      {appt.phone ? (
+                        <span className="text-slate-600 font-medium text-xs break-words">
+                          {appt.phone}
+                        </span>
+                      ) : (
+                        <span className="text-slate-400 text-xs">-</span>
+                      )}
                     </td>
                     
+                    {/* Email Column - Mailto Link with underline */}
                     <td className="px-4 py-4 align-top">
-                      <div className="text-slate-600 font-medium text-xs break-all">{appt.email || '-'}</div>
+                      {appt.email ? (
+                        <a href={`mailto:${appt.email}`} className="text-blue-500 font-medium text-xs break-all underline hover:text-blue-700">
+                          {appt.email}
+                        </a>
+                      ) : (
+                         <span className="text-slate-400 text-xs">-</span>
+                      )}
                     </td>
 
                     <td className="px-4 py-4 align-top">
@@ -238,7 +246,7 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ owner, appointments, onEd
                            </div>
                         </div>
                       </td>
-                      <td colSpan={4}></td> {/* Spacer for remaining columns */}
+                      <td colSpan={3}></td> {/* Spacer for remaining columns */}
                     </tr>
                   )}
                 </React.Fragment>
