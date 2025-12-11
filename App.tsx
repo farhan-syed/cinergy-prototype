@@ -177,7 +177,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-start gap-3">
             <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <p className="text-sm text-slate-700 leading-relaxed">
-                <span className="font-semibold text-slate-900">Prototype Preview:</span> This is a non-functional prototype programmed to demonstrate the possibilities of an in house software built specifically for Cinergy Financial's needs/workflow. <b>Disregard</b> how things look/feel as that can always be changed. If you think of a must add feature for v1, please email <a href="mailto:farhan@cinergyfinancial.com" className="text-cinergy-600 hover:text-cinergy-800 hover:underline">farhan@cinergyfinancial.com</a>
+                <span className="font-semibold text-slate-900">Prototype Preview:</span> This is a mostly non-functional prototype programmed to demonstrate the possibilities of an in house software built specifically for Cinergy Financial's needs/workflow.<br /> <u><b>Disregard</b></u> how things look/feel as that can always be changed. If you think of a must add feature for v1, please email <a href="mailto:farhan@cinergyfinancial.com" className="text-cinergy-600 hover:text-cinergy-800 hover:underline">farhan@cinergyfinancial.com</a>
             </p>
         </div>
       </div>
