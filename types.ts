@@ -29,6 +29,7 @@ export interface Appointment {
   confirmation: ConfirmationStatus | string;
   dppsValue?: string; // Available for DPPs
   ifsValue?: string; // Available for IFs
+  notes?: string; // Internal notes
 }
 
 export interface DaySchedule {
@@ -40,7 +41,11 @@ export interface ToDoItem {
   id: string;
   text: string;
   completed: boolean;
-  completionTime?: string; // HH:mm format, time the item needs to be completed
-  reminders: string[]; // Array of active reminders: '1h', '30m', '10m'
+  completionTime?: string; // HH:mm format
+  dueDate?: string; // YYYY-MM-DD
+  reminders: string[]; // Array of active reminders: '1d', '1h', '10m'
+  reminderDate?: string; // YYYY-MM-DD
   sourceAppointmentId?: string; // ID of the appointment if imported from schedule
+  notes?: string;
+  attachments?: string[];
 }

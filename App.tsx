@@ -41,6 +41,9 @@ export default function App() {
   const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_DATA);
   const [todos, setTodos] = useState<ToDoItem[]>(INITIAL_TODOS);
   const [activeTab, setActiveTab] = useState<'view' | 'intake' | 'todo'>('view');
+  
+  // Edit Modal State
+  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
 
   const owners = Array.from(new Set(appointments.map(a => a.owner)));
   const allOwners = Array.from(new Set([...owners, 'Cindy', 'Leticia', 'Staff']));
@@ -50,14 +53,25 @@ export default function App() {
     setActiveTab('view');
   };
 
-  const handleAddTodo = (text: string, completionTime?: string, sourceAppointmentId?: string) => {
+  const handleUpdateAppointment = (updatedAppt: Appointment) => {
+    setAppointments(prev => prev.map(a => a.id === updatedAppt.id ? updatedAppt : a));
+    setEditingAppointment(null);
+  };
+
+  const handleAddTodo = (text: string, completionTime?: string, sourceAppointmentId?: string, dueDate?: string) => {
+    // Default to today if no date is provided
+    const finalDueDate = dueDate || new Date().toISOString().split('T')[0];
+
     const newTodo: ToDoItem = {
       id: Math.random().toString(36).substr(2, 9),
       text,
       completed: false,
       completionTime,
+      dueDate: finalDueDate,
       reminders: [],
-      sourceAppointmentId
+      sourceAppointmentId,
+      notes: '',
+      attachments: []
     };
     setTodos(prev => [newTodo, ...prev]);
   };
@@ -84,6 +98,32 @@ export default function App() {
       return { ...item, reminders: newReminders };
     }));
   };
+  
+  const handleSetCompletionTime = (id: string, time: string) => {
+    setTodos(prev => prev.map(item => 
+      item.id === id ? { ...item, completionTime: time } : item
+    ));
+  };
+
+  const handleSetDueDate = (id: string, date: string) => {
+     setTodos(prev => prev.map(item => 
+      item.id === id ? { ...item, dueDate: date } : item
+    ));
+  };
+
+  const handleUpdateNote = (id: string, note: string) => {
+    setTodos(prev => prev.map(item =>
+      item.id === id ? { ...item, notes: note } : item
+    ));
+  };
+
+  const handleAddAttachment = (id: string) => {
+    setTodos(prev => prev.map(item => {
+      if (item.id !== id) return item;
+      const newFile = `Document_${(item.attachments?.length || 0) + 1}.pdf`;
+      return { ...item, attachments: [...(item.attachments || []), newFile] };
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20 font-sans print:pb-0 print:bg-white">
@@ -92,6 +132,9 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold tracking-tight text-slate-900">Cinergy Financial</h1>
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 tracking-wide uppercase shadow-sm">
+              Prototype
+            </span>
           </div>
           
           <div className="flex items-center gap-4">
@@ -123,11 +166,21 @@ export default function App() {
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
-              My To-Do List
+              My Tasks
             </button>
           </div>
         </div>
       </header>
+
+      {/* Prototype Disclaimer Banner */}
+      <div className="bg-slate-50 border-b border-slate-200 print:hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-start gap-3">
+            <svg className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p className="text-sm text-slate-600 leading-relaxed">
+                <span className="font-semibold text-slate-900">Prototype Preview:</span> This is a non-functional prototype programmed to demonstrate the possibilities of an in house software built specifically for Cinergy Financial's needs/workflow. <b>Disregard</b> how things look/feel as that can always be changed. If you think of a must add feature for v1, please email <a href="mailto:farhan@cinergyfinancial.com" className="text-cinergy-600 hover:text-cinergy-800 hover:underline">farhan@cinergyfinancial.com</a>
+            </p>
+        </div>
+      </div>
 
       <main className="max-w-7xl mx-auto px-6 py-8 print:w-full print:max-w-none print:p-0">
         
@@ -163,6 +216,7 @@ export default function App() {
                   <ScheduleTable 
                     owner={owner}
                     appointments={ownerAppts}
+                    onEdit={(appt) => setEditingAppointment(appt)}
                   />
                 </div>
               );
@@ -170,7 +224,7 @@ export default function App() {
           </div>
         ) : activeTab === 'intake' ? (
           <div className="max-w-3xl mx-auto print:hidden">
-             <IntakeForm onAdd={handleAddAppointment} owners={allOwners} />
+             <IntakeForm onSubmit={handleAddAppointment} owners={allOwners} />
           </div>
         ) : (
           <div className="print:block">
@@ -181,10 +235,43 @@ export default function App() {
               onToggle={handleToggleTodo}
               onDelete={handleDeleteTodo}
               onToggleReminder={handleToggleReminder}
+              onSetCompletionTime={handleSetCompletionTime}
+              onSetDueDate={handleSetDueDate}
+              onUpdateNote={handleUpdateNote}
+              onAddAttachment={handleAddAttachment}
             />
           </div>
         )}
       </main>
+
+      {/* Edit Modal */}
+      {editingAppointment && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
+           <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
+              <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
+                 <div>
+                    <h3 className="font-bold text-xl text-slate-800">Edit Event</h3>
+                    <p className="text-xs text-slate-500 uppercase tracking-wider mt-0.5">Update Details</p>
+                 </div>
+                 <button 
+                   onClick={() => setEditingAppointment(null)} 
+                   className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                 >
+                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                 </button>
+              </div>
+              <div className="p-6">
+                <IntakeForm 
+                   owners={allOwners}
+                   onSubmit={handleUpdateAppointment}
+                   initialData={editingAppointment}
+                   onCancel={() => setEditingAppointment(null)}
+                />
+              </div>
+           </div>
+        </div>
+      )}
+
     </div>
   );
 }
