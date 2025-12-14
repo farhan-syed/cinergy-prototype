@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Appointment, LocationType } from '../types';
 
@@ -87,7 +86,7 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ owner, appointments, onEd
       </div>
 
       <div className="overflow-x-auto print:overflow-visible">
-        <table className="w-full text-left border-collapse min-w-[1000px] print:min-w-0">
+        <table className="w-full text-left border-collapse print:min-w-0">
           <thead>
             <tr className="bg-white border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider print:text-slate-700 print:border-slate-300">
               <th className="px-4 py-3 w-20">Time</th>
@@ -171,13 +170,13 @@ const ScheduleTable: React.FC<ScheduleTableProps> = ({ owner, appointments, onEd
                             href={appt.zoomLink || 'https://zoom.us'} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1 px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition-colors cursor-pointer print:border-blue-300 print:text-blue-800 min-w-[72px] justify-center"
+                            className="text-blue-600 hover:text-blue-800 hover:underline font-medium text-xs flex items-center gap-1"
                           >
                             Zoom 
                             <svg className="w-3 h-3 print:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                           </a>
                         ) : (
-                          <span className="inline-block px-2 py-1 bg-slate-100 text-slate-600 rounded text-xs font-medium border border-slate-200 print:bg-white print:border-slate-300">
+                          <span className="text-slate-700 text-xs font-medium">
                             {appt.location}
                           </span>
                         )}

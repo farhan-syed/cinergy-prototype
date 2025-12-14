@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Appointment, LocationType, ConfirmationStatus, ToDoItem } from './types';
+import { Appointment, LocationType, ConfirmationStatus, ToDoItem, TaskStatus } from './types';
 import ScheduleTable from './components/ScheduleTable';
 import IntakeForm from './components/IntakeForm';
 import ToDoList from './components/ToDoList';
@@ -58,13 +57,23 @@ export default function App() {
     setEditingAppointment(null);
   };
 
-  const handleAddTodo = (text: string, completionTime?: string, sourceAppointmentId?: string, dueDate?: string) => {
-    // Default to today if no date is provided
-    const finalDueDate = dueDate || new Date().toISOString().split('T')[0];
+  const handleAddTodo = (text: string, completionTime?: string, sourceAppointmentId?: string, dueDate?: string, assignee: string = 'Me', description: string = '') => {
+    // Default to today if no date is provided, using local time
+    let finalDueDate = dueDate;
+    if (!finalDueDate) {
+       const today = new Date();
+       const year = today.getFullYear();
+       const month = String(today.getMonth() + 1).padStart(2, '0');
+       const day = String(today.getDate()).padStart(2, '0');
+       finalDueDate = `${year}-${month}-${day}`;
+    }
 
     const newTodo: ToDoItem = {
       id: Math.random().toString(36).substr(2, 9),
       text,
+      description,
+      status: 'Pending',
+      assignee,
       completed: false,
       completionTime,
       dueDate: finalDueDate,
@@ -76,9 +85,21 @@ export default function App() {
     setTodos(prev => [newTodo, ...prev]);
   };
 
-  const handleToggleTodo = (id: string) => {
+  const handleUpdateStatus = (id: string, status: TaskStatus) => {
     setTodos(prev => prev.map(item => 
-      item.id === id ? { ...item, completed: !item.completed } : item
+      item.id === id ? { ...item, status, completed: status === 'Completed' } : item
+    ));
+  };
+
+  const handleUpdateAssignee = (id: string, assignee: string) => {
+    setTodos(prev => prev.map(item => 
+      item.id === id ? { ...item, assignee } : item
+    ));
+  };
+
+  const handleUpdateDescription = (id: string, description: string) => {
+    setTodos(prev => prev.map(item => 
+      item.id === id ? { ...item, description } : item
     ));
   };
 
@@ -129,7 +150,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 pb-20 font-sans print:pb-0 print:bg-white">
       {/* Navbar - Hidden on print */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50 print:hidden no-print">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+        <div className="max-w-[95%] mx-auto px-6 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold tracking-tight text-slate-900">Cinergy Financial</h1>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 tracking-wide uppercase shadow-sm">
@@ -166,7 +187,7 @@ export default function App() {
                   : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
-              My Tasks
+              Tasks
             </button>
           </div>
         </div>
@@ -174,15 +195,15 @@ export default function App() {
 
       {/* Prototype Disclaimer Banner */}
       <div className="bg-yellow-50 border-b border-yellow-200 print:hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex items-start gap-3">
+        <div className="max-w-[95%] mx-auto px-6 py-3 flex items-start gap-3">
             <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <p className="text-sm text-slate-700 leading-relaxed">
-                <span className="font-semibold text-slate-900">Prototype Preview:</span> This is a mostly non-functional prototype programmed to demonstrate the possibilities of an in house software built specifically for Cinergy Financial's needs/workflow.<br /> <u><b>Disregard</b></u> how things look/feel as that can always be changed. If you think of a must add feature for v1, please email <a href="mailto:farhan@cinergyfinancial.com" className="text-cinergy-600 hover:text-cinergy-800 hover:underline">farhan@cinergyfinancial.com</a>
+                <span className="font-semibold text-slate-900">Prototype Preview:</span> This is a mostly non-functional prototype programmed to demonstrate the possibilities of an in house software built specifically for Cinergy Financial's needs/workflow.<br /> <u><b>Disregard</b></u> how things look/feel as that can always be changed. 
             </p>
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-6 py-8 print:w-full print:max-w-none print:p-0">
+      <main className="max-w-[95%] mx-auto px-6 py-8 print:w-full print:max-w-none print:p-0">
         
         {/* Hero Section */}
         {activeTab === 'view' && (
@@ -230,9 +251,12 @@ export default function App() {
           <div className="print:block">
             <ToDoList 
               items={todos}
+              owners={allOwners}
               appointments={appointments}
               onAdd={handleAddTodo}
-              onToggle={handleToggleTodo}
+              onUpdateStatus={handleUpdateStatus}
+              onUpdateAssignee={handleUpdateAssignee}
+              onUpdateDescription={handleUpdateDescription}
               onDelete={handleDeleteTodo}
               onToggleReminder={handleToggleReminder}
               onSetCompletionTime={handleSetCompletionTime}

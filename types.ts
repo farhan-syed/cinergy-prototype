@@ -13,6 +13,8 @@ export enum ConfirmationStatus {
   MSG = 'Left Msg'
 }
 
+export type TaskStatus = 'Pending' | 'In Progress' | 'On Hold' | 'Completed';
+
 export interface Appointment {
   id: string;
   owner: string; // e.g., "Cindy", "Leticia", "Staff"
@@ -40,12 +42,15 @@ export interface DaySchedule {
 export interface ToDoItem {
   id: string;
   text: string;
-  completed: boolean;
+  description?: string; // Context/Description of the task
+  status: TaskStatus;
+  assignee: string; // 'Me', 'Cindy', etc.
+  completed: boolean; // Kept for backward compat, synced with status === 'Completed'
   completionTime?: string; // HH:mm format
   dueDate?: string; // YYYY-MM-DD
   reminders: string[]; // Array of active reminders: '1d', '1h', '10m'
   reminderDate?: string; // YYYY-MM-DD
   sourceAppointmentId?: string; // ID of the appointment if imported from schedule
-  notes?: string;
+  notes?: string; // Additional running notes/updates
   attachments?: string[];
 }
